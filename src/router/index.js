@@ -12,6 +12,7 @@ import { storeToRefs } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 import Admin from '@/views/Admin.vue'
 import CreateCourse from '@/views/CreateCourse.vue'
+import Game from '@/views/Game.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,11 @@ const router = createRouter({
       path: '/create-course',
       name: 'CreateCourse',
       component: CreateCourse,
+    },
+    {
+      path: '/game',
+      name: 'PlayGame',
+      component: Game,
     },
     {
       path: '/register',
