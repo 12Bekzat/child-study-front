@@ -62,6 +62,7 @@
           </p>
           <Button
             label="Курсқа өту"
+            v-if="!isAdmin('ROLE_PARENT')"
             class="w-full"
             @click="() => {
               activeCourse = course
@@ -91,17 +92,18 @@ import {
 } from "primevue";
 import { onMounted, ref, watch } from "vue";
 
+
 const store = useMainStore();
 const { currentUser, activeCourse } = storeToRefs(store);
 
 const { getPaged } = useQueries()
 const courses = ref([])
 
-const isAdmin = () => {
+const isAdmin = (roleN = 'ROLE_ADMIN') => {
   const roles = currentUser.value?.roles;
 
   return roles?.length > 0
-    ? roles.find((role) => role.name === "ROLE_ADMIN")
+    ? roles.find((role) => role.name === roleN)
     : false;
 };
 

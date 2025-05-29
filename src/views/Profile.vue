@@ -29,15 +29,23 @@
   <div class="flex" style="width: 90%; padding: 18px">
     <MeterGroup :value="value" style="width: 100%" />
   </div>
+
+  <div class="childs" v-if="isAdmin('ROLE_PARENT')">
+    <div class="childs__item" v-for="user in users">
+      {{ user?.fullName }}
+    </div>
+  </div>
 </template>
 <script setup>
+import { useQueries } from "@/composables/useQueries";
 import { useMainStore } from "@/stores/mainStore";
 import { storeToRefs } from "pinia";
 import { Avatar, Button, MeterGroup } from "primevue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const store = useMainStore();
 const { currentUser } = storeToRefs(store);
+const { getPaged } = useQueries()
 
 const value = ref([
   { label: "Жұлдызша", color: "#34d399", value: 16, icon: "pi pi-star-fill" },
@@ -45,6 +53,14 @@ const value = ref([
   { label: "Алтын белгі", color: "#60a5fa", value: 24, icon: "pi pi-trophy" },
   { label: "Күміс теңге", color: "#c084fc", value: 10, icon: "pi pi-bitcoin" },
 ]);
+
+const isAdmin = (roleN = 'ROLE_ADMIN') => {
+    const roles = currentUser.value?.roles;
+
+    return roles?.length > 0
+        ? roles.find((role) => role.name === roleN)
+        : false;
+};
 
 const router = useRouter();
 
@@ -64,4 +80,15 @@ const signOut = () => {
   currentUser.value = null;
   router.push({ name: "Login" });
 };
+
+const users = ref([])
+
+onMounted(async () => {
+  await getChilds()
+})
+
+const getChilds = async () => {
+  users.value = await getPaged({ serviceName: 'users' })
+  users.value = users.value.filter(user => user?.parentId && user?.parentId === currentUser.value?.id)
+}
 </script>

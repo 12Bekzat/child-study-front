@@ -1,21 +1,19 @@
 <template>
+  <div class="header-info">
+    <p>Сіз өттіңіз</p>
+    <input style="--base: #8cc8e4;" :value="progress" max="100" min="1" class="kawaii" type="range" disabled/>
+  </div>
   <div class="splitter">
     <div class="splitter-first">
       <div class="game" v-for="image, ind in images">
-        <img :src="image" alt="" @click="pushToGame(ind)"/>
+        <img :src="image" alt="" @click="pushToGame(ind)" />
       </div>
-    </div>
-    <div class="splitter-second">
-      <p>Ойындар өтті</p>
-      <ProgressBar :value="50"></ProgressBar>
-      <p style="margin: 10px 0 0;">Қаншалықты өтті</p>
-      <Rating v-model="rationg" readonly />
     </div>
   </div>
 </template>
 <script setup>
 import { ProgressBar, Rating, Splitter, SplitterPanel } from 'primevue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import Game1 from '@assets/game1.png'
 import Game2 from '@assets/game2.png'
 import Game3 from '@assets/game3.png'
@@ -32,7 +30,19 @@ const { activeGame } = storeToRefs(store)
 const { level, passed, history } = storeToRefs(gameStore)
 const router = useRouter()
 
-const rationg = ref(4)
+const progress = ref(50)
+
+onMounted(() => {
+  const passeds = history.value.map(item => item?.passed)
+
+  let allPass = 0
+
+  passeds.forEach(item => {
+    allPass += item
+  })
+
+  progress.value = (allPass * 100) / 9  
+})
 
 const pushToGame = (ind) => {
   activeGame.value = ind
@@ -42,7 +52,7 @@ const pushToGame = (ind) => {
     level.value = currentGame?.level || 0
     passed.value = currentGame?.passed || 0
   }
-  
+
   router.push({ name: 'PlayGame' })
 }
 </script>

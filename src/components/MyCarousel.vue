@@ -6,9 +6,10 @@
     :responsive-options="responsiveOptions"
     circular
     :autoplayInterval="3000"
+    style="width: 100%;"
   >
     <template #item="slotProps" style="width: 100%;">
-      <div class="block">
+      <div class="carousel-block">
         <img src="https://cdn.prod.website-files.com/599873abab717100012c91ea/676461a0f39060b416ff9c63_970cdcfe6281a050ccace07a294389d9.png" alt="">
       </div>
     </template>

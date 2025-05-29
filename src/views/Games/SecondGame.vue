@@ -1,34 +1,12 @@
 <template>
     <div class="play">
         <div class="play__manage">
-            <img :src="Game2" alt="" class="play__logo" style="width: 60%; min-width: 300px;">
+            <img :src="Game2" alt="" class="play__logo" style="">
             <div class="play__list">
-                <button class="play__button" @click="tryPlay">Ойнау</button>
+                <button class="play__button" @click="visibleStart = true">Ойнау</button>
                 <button class="play__button" @click="visibleSettings = true">Параметрлер</button>
                 <button class="play__button" @click="clickToStop">Шығу</button>
             </div>
-        </div>
-        <div class="play__levels">
-            <button :class="'play__button ' + (passed < 0 ? 'disabled' : '')" style="top: 35%; left: 58%;"
-                @click="clickGame(0)">
-                <i class="pi pi-star-fill">
-                </i>
-            </button>
-            <button :class="'play__button ' + (passed < 1 ? 'disabled' : '')" style="top: 42%; left: 53%;"
-                @click="clickGame(1)">
-                <i class="pi pi-star-fill">
-                </i>
-            </button>
-            <button :class="'play__button ' + (passed < 2 ? 'disabled' : ' golden')" style="top: 50%; left: 56%;"
-                @click="clickGame(2)">
-                <i class="pi pi-money-bill">
-                </i>
-            </button>
-            <button :class="'play__button ' + (passed < 3 ? 'disabled' : '')" style="top: 56%; left: 50%;"
-                @click="clickGame(3)">
-                <i class="pi pi-crown">
-                </i>
-            </button>
         </div>
     </div>
     <Dialog v-model:visible="visibleSettings" modal draggable="false" header="Параметрлер">
@@ -39,6 +17,9 @@
                     @click="volume = volume ? 0 : 1"></i>
             </label>
         </div>
+    </Dialog>
+    <Dialog v-model:visible="visibleStart" modal draggable="false" header="Бастау">
+        <Level @click-game="clickGame" />
     </Dialog>
     <SecondGamePlay v-if="visibleGame" v-model="visibleGame" />
 </template>
@@ -53,9 +34,10 @@ import SmallWin from '@assets/small-win.wav'
 import BigWin from '@assets/big-win.wav'
 import { useRouter } from 'vue-router';
 import SecondGamePlay from './SecondGamePlay.vue';
+import Level from './Level.vue';
 
 const gameStore = useGameStore()
-const { levels, level, passed } = storeToRefs(gameStore)
+const { levels, level, passed, history } = storeToRefs(gameStore)
 
 const audio = new Audio(Music)
 const smallWin = new Audio(SmallWin)
@@ -79,12 +61,14 @@ const words = {
 }
 
 function getRandomWords(array, count = 5) {
-  const shuffled = array.slice().sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, count)
+    const shuffled = array.slice().sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, count)
 }
 
 onMounted(() => {
-    level.value = 0
+    const currentGame = history.value.find(item => item?.activeGame === 1)
+    level.value = currentGame?.level || 0
+    passed.value = currentGame?.passed || 0
     const easyLevel = getRandomWords(words.easy)
     const mediumLevel = getRandomWords(words.medium)
     const hardLevel = getRandomWords(words.hard)
@@ -121,6 +105,7 @@ const clickGame = (lvl) => {
     console.log('lvl', lvl)
     if (lvl > passed.value) return
     level.value = lvl
+    visibleStart.value = false
     tryPlay()
 }
 
@@ -134,5 +119,6 @@ const clickToStop = () => {
 }
 
 const visibleSettings = ref(false)
+const visibleStart = ref(false)
 const visibleGame = ref(false)
 </script>

@@ -37,7 +37,7 @@ onMounted(() => {
   AppEventBus.emit('theme-palette-change')
 });
 
-const formUrls = ['login', 'register']
+const formUrls = ['login', 'register', '/play']
 </script>
 
 <template>

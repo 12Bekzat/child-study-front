@@ -13,6 +13,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Admin from '@/views/Admin.vue'
 import CreateCourse from '@/views/CreateCourse.vue'
 import Game from '@/views/Game.vue'
+import Test from '@/views/Test.vue'
+import TestDetails from '@/views/TestDetails.vue'
+import CreateTests from '@/views/CreateTests.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +70,21 @@ const router = createRouter({
       component: Admin,
     },
     {
+      path: '/tasks',
+      name: 'Tasks',
+      component: Test,
+    },
+    {
+      path: '/create-test',
+      name: 'CreateTests',
+      component: CreateTests,
+    },
+    {
+      path: '/test-details',
+      name: 'TestDetails',
+      component: TestDetails,
+    },
+    {
       path: '/create-user',
       name: 'CreateUser',
       component: Register,
@@ -77,7 +95,7 @@ const router = createRouter({
       component: CreateCourse,
     },
     {
-      path: '/game',
+      path: '/play',
       name: 'PlayGame',
       component: Game,
     },

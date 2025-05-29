@@ -159,7 +159,6 @@ const save = async () => {
     lessons: lessons.value,
     preview: activeImg.value
   };
-  debugger
 
   const ans = await create({ item: newItem, serviceName: "course" });
   if (ans) {

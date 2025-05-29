@@ -6,9 +6,10 @@ export const useMainStore = defineStore('mainStore', () => {
   const activeCourse = ref(null)
   const activeLesson = ref(null)
   const activeGame = ref(0)
+  const activeTest = ref({})
   const play = ref(false)
 
-  return { currentUser, activeCourse, activeLesson, activeGame, play }
+  return { currentUser, activeCourse, activeLesson, activeGame, play, activeTest }
 }, {
   persist: true, // Включаем сохранение в localStorage
 })
