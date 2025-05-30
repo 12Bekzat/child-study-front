@@ -6,7 +6,7 @@
     <div class="one-lesson__details">
       {{ activeLesson?.description }}
     </div>
-    <div class="one-lesson__manage">
+    <div class="one-lesson__manage" v-if="!isReview()">
       <Button label="Өту" :disabled="!isAdmin()" @click="setReview"/>
     </div>
   </div>
@@ -16,11 +16,13 @@ import { useQueries } from "@/composables/useQueries";
 import { useMainStore } from "@/stores/mainStore";
 import { storeToRefs } from "pinia";
 import { Button } from "primevue";
+import { onMounted, ref } from "vue";
 
 const store = useMainStore()
 const { activeLesson, currentUser } = storeToRefs(store)
 
-const { update, getMe } = useQueries()
+const { create, getPaged } = useQueries()
+const reviews = ref([])
 
 const isAdmin = () => {
   const roles = currentUser.value?.roles;
@@ -30,28 +32,31 @@ const isAdmin = () => {
     : false;
 };
 
+const isReview = () => {
+  return reviews.value.find(item => item?.userId === currentUser?.value?.id && item?.lessonId === activeLesson.value?.id)
+}
+
+const getReviews = async () => {
+  reviews.value = await getPaged({ serviceName: 'reviews' })
+  reviews.value = reviews.value.filter(item => {
+    return item?.userId === currentUser?.value?.id && item?.lessonId === activeLesson.value?.id
+  })
+}
+
+onMounted(async () => {
+  await getReviews()
+})
+
 const setReview = async () => {
-    const oldExtra = currentUser.value?.extra ? JSON.parse(currentUser.value?.extra) : {}
-
-    
-    if(!oldExtra?.reviewLessons) {
-        oldExtra.reviewLessons = [activeLesson.value]
-    } else {
-        oldExtra.reviewLessons.push(activeLesson.value)
-    }
-
     const item = {
-        id: currentUser.value?.id,
-        userDto: {
-            extra: JSON.stringify(oldExtra)
-        } 
+        userId: currentUser.value?.id,
+        lessonId: activeLesson.value?.id
     }
-    debugger
 
     try {
-      const ans = await update({ item, serviceName: 'users' })
+      const ans = await create({ item, serviceName: 'reviews' })
     } catch (error) {}
-    
-    await getMe()
+
+    await getReviews()
 }
 </script>

@@ -81,7 +81,11 @@ const setTest = (test) => {
     }
 
     if (activeTest.value?.questions?.length > 0) {
+        console.log('shuffle', [...activeTest.value?.questions]);
+        
         activeTest.value.questions = shuffleArray(activeTest.value?.questions || [])
+        
+        console.log('shuffle', [...activeTest.value?.questions]);
     }
     
     router.push({ name: 'TestDetails' })

@@ -1,24 +1,31 @@
 <template>
-    <div class="close">
-        <button class="play__button" @click="backToMenu">
-            <i class="pi pi-times"></i>
-        </button>
+  <div class="close">
+    <button class="play__button" @click="backToMenu">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+  <div class="timer">
+    {{ getTimer() }}
+  </div>
+  <div class="second-game">
+    <img class="second-game__bg" :src="Bg" />
+    <div class="desk">
+      <div
+        class="desk__tag"
+        v-for="(tag, ind) in blocks"
+        @click="checkVariant(tag)"
+      >
+        <img :src="getImage(tag)" alt="" />
+        <i
+          class="pi pi-star-fill star"
+          v-if="answers.slice(0, current).includes(tag)"
+        ></i>
+      </div>
     </div>
-    <div class="timer">
-        {{ getTimer() }}
+    <div class="target">
+      {{ answers[current] }}
     </div>
-    <div class="second-game">
-        <img class="second-game__bg" :src="Bg" />
-        <div class="desk">
-            <div class="desk__tag" v-for="tag, ind in blocks" @click="checkVariant(tag)">
-                <img :src="getImage(tag)" alt="">
-                <i class="pi pi-star-fill star" v-if="answers.slice(0, current).includes(tag)"></i>
-            </div>
-        </div>
-        <div class="target">
-            {{ answers[current] }}
-        </div>
-    </div>
+  </div>
 </template>
 <script setup>
 import Bg from '@assets/bg1.png'
@@ -27,6 +34,7 @@ import { useGameStore } from '@/stores/gameStore'
 import { storeToRefs } from 'pinia'
 import { ref, reactive, onMounted } from 'vue'
 import { useMainStore } from '@/stores/mainStore'
+import { useQueries } from '@/composables/useQueries'
 
 const images = import.meta.glob('@/assets/first-game/*.png', { eager: true, import: 'default' })
 const getImage = (name) => images[`/src/assets/first-game/${name}.png`] // динамически
@@ -34,9 +42,11 @@ const getImage = (name) => images[`/src/assets/first-game/${name}.png`] // ди�
 const visible = defineModel()
 
 const store = useMainStore()
-const { activeGame } = storeToRefs(store)
+const { activeGame, currentUser } = storeToRefs(store)
 const gameStore = useGameStore()
 const { level, levels, passed, lose, history } = storeToRefs(gameStore)
+
+const { create } = useQueries()
 
 const seconds = ref(120)
 const current = ref(0)
@@ -84,7 +94,7 @@ onMounted(() => {
     console.log(blocks.value, current.value);
 })
 
-const winLevel = () => {
+const winLevel = async () => {
     if (timer.value) clearTimeout(timer.value)
     visible.value = false
     level.value += 1
@@ -101,6 +111,35 @@ const winLevel = () => {
         history.value.push({
             activeGame: activeGame.value, level: level.value, passed: passed.value
         })
+    }
+
+    if (currentUser.value) {
+        try {
+            let item = {
+                name: "Жұлдызша",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+            item = {
+                name: "Алмас",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+            item = {
+                name: "Алтын белгі",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+            item = {
+                name: "Күміс теңге",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+        } catch {}
     }
 }
 

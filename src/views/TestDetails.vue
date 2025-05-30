@@ -4,20 +4,20 @@
         <div class="test-detail__item" v-for="quest, ind in activeTest.questions">
             <div class="test-detail__ques">{{ ind + 1 }}. {{ quest?.question }}</div>
             <div class="test-detail__ans">
-                 <RadioButton v-model="ans[ind]" inputId="ingredient1" name="pizza" value="1" />
-                 <label for="ingredient1">{{ quest?.answer1 }}</label>
+                 <RadioButton v-model="ans[ind]" :inputId="'ingredient1' + ind" name="pizza" value="1" />
+                 <label :for="'ingredient1' + ind">{{ quest?.answer1 }}</label>
             </div>
             <div class="test-detail__ans">
-                 <RadioButton v-model="ans[ind]" inputId="ingredient2" name="pizza" value="2" />
-                 <label for="ingredient2">{{ quest?.answer2 }}</label>
+                 <RadioButton v-model="ans[ind]" :inputId="'ingredient2' + ind" name="pizza" value="2" />
+                 <label :for="'ingredient2' + ind">{{ quest?.answer2 }}</label>
             </div>
             <div class="test-detail__ans">
-                 <RadioButton v-model="ans[ind]" inputId="ingredient3" name="pizza" value="3" />
-                 <label for="ingredient3">{{ quest?.answer3 }}</label>
+                 <RadioButton v-model="ans[ind]" :inputId="'ingredient3' + ind" name="pizza" value="3" />
+                 <label :for="'ingredient3' + ind">{{ quest?.answer3 }}</label>
             </div>
             <div class="test-detail__ans">
-                 <RadioButton v-model="ans[ind]" inputId="ingredient4" name="pizza" value="4" />
-                 <label for="ingredient4">{{ quest?.answer4 }}</label>
+                 <RadioButton v-model="ans[ind]" :inputId="'ingredient4' + ind" name="pizza" value="4" />
+                 <label :for="'ingredient4' + ind">{{ quest?.answer4 }}</label>
             </div>
         </div>
         <div class="test-detail__item">

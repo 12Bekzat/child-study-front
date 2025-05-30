@@ -1,27 +1,34 @@
 <template>
-    <div class="close">
-        <button class="play__button" @click="backToMenu">
-            <i class="pi pi-times"></i>
-        </button>
-        <button class="play__button" @click="restart">
-            <i class="pi pi-refresh"></i>
-        </button>
-    </div>
-    <div class="second-game">
-        <img class="second-game__bg" :src="Bg" />
-        <div class="board">
-            <!-- Зона сбора -->
-            <div class="dropzone" ref="dropzone">
-            </div>
+  <div class="close">
+    <button class="play__button" @click="backToMenu">
+      <i class="pi pi-times"></i>
+    </button>
+    <button class="play__button" @click="restart">
+      <i class="pi pi-refresh"></i>
+    </button>
+  </div>
+  <div class="second-game">
+    <img class="second-game__bg" :src="Bg" />
+    <div class="board">
+      <!-- Зона сбора -->
+      <div class="dropzone" ref="dropzone"></div>
 
-            <!-- Перетаскиваемые квадраты -->
-            <div v-for="(block, index) in blocks" :key="index" class="block"
-                :style="{ left: block.x + 'px', top: block.y + 'px', backgroundColor: block.collected ? 'cornflowerblue' : 'crimson' }"
-                @mousedown="startDrag(index, $event)">
-                {{ block?.letter }}
-            </div>
-        </div>
+      <!-- Перетаскиваемые квадраты -->
+      <div
+        v-for="(block, index) in blocks"
+        :key="index"
+        class="block"
+        :style="{
+          left: block.x + 'px',
+          top: block.y + 'px',
+          backgroundColor: block.collected ? 'cornflowerblue' : 'crimson',
+        }"
+        @mousedown="startDrag(index, $event)"
+      >
+        {{ block?.letter }}
+      </div>
     </div>
+  </div>
 </template>
 <script setup>
 import Bg from '@assets/bg1.png'
@@ -29,11 +36,17 @@ import SmallWin from '@assets/small-win.wav'
 import { useGameStore } from '@/stores/gameStore'
 import { storeToRefs } from 'pinia'
 import { ref, reactive, onMounted } from 'vue'
+import { useMainStore } from '@/stores/mainStore'
+import { useQueries } from '@/composables/useQueries'
 
 const visible = defineModel()
 
 const gameStore = useGameStore()
 const { level, levels, passed } = storeToRefs(gameStore)
+const store = useMainStore()
+const { currentUser } = storeToRefs(store)
+
+const { create } = useQueries()
 
 let blocks = ref([])
 
@@ -52,7 +65,7 @@ onMounted(() => {
     if (levels.value[level.value] === 'prize') {
         winLevel()
     }
-    
+
     const shuffledArray = shuffleLetterArray(levels.value[level.value])
 
     shuffledArray?.forEach((letter, ind) => {
@@ -139,7 +152,7 @@ const endDrag = () => {
     activeIndex = null
 }
 
-const winLevel = () => {
+const winLevel = async () => {
     visible.value = false
     level.value += 1
     passed.value = level.value
@@ -155,6 +168,35 @@ const winLevel = () => {
         history.value.push({
             activeGame: activeGame.value, level: level.value, passed: passed.value
         })
+    }
+
+    if (currentUser.value) {
+        try {
+            let item = {
+                name: "Жұлдызша",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+            item = {
+                name: "Алмас",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+            item = {
+                name: "Алтын белгі",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+            item = {
+                name: "Күміс теңге",
+                count: 5,
+                userId: currentUser.value?.id,
+            };
+            await create({ item, serviceName: "reward" });
+        } catch {}
     }
 }
 

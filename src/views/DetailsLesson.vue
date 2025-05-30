@@ -44,7 +44,7 @@
         <Tag
           v-model="checked"
           style="white-space: nowrap"
-        >{{ item?.review ? 'Өтті' : 'Өткен жоқ' }}</Tag>
+        >{{ isReview(lesson) ? 'Өтті' : 'Өткен жоқ' }}</Tag>
         <Button
           label="Өту"
           @click="
@@ -70,6 +70,18 @@ const store = useMainStore();
 const { activeCourse, activeLesson, currentUser } = storeToRefs(store);
 const { getPaged } = useQueries();
 const lessons = ref([]);
+const reviews = ref([])
+
+const isReview = (lesson) => {
+  return reviews.value.find(item => item?.userId === currentUser?.value?.id && item?.lessonId === lesson?.id)
+}
+
+const getReviews = async () => {
+  reviews.value = await getPaged({ serviceName: 'reviews' })
+  reviews.value = reviews.value.filter(item => {
+    return item?.userId === currentUser?.value?.id
+  })
+}
 
 const get = async () => {
   lessons.value = await getPaged({ serviceName: "lesson" });
@@ -96,6 +108,7 @@ const get = async () => {
 
 onMounted(async () => {
   await get();
+  await getReviews();
   console.log(lessons.value);
   console.log(activeCourse.value);
 });

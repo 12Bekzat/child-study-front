@@ -22,11 +22,24 @@
       <div class="profile__text">{{ currentUser?.email }}</div>
     </div>
     <div class="profile__manage">
-      <Button label="Өңдеу" icon="pi pi-pen-to-square" @click="router.push({ name: 'EditUser' })"/>
-      <Button label="Шығу" severity="danger" icon="pi pi-sign-out" @click="signOut"/>
+      <Button
+        label="Өңдеу"
+        icon="pi pi-pen-to-square"
+        @click="router.push({ name: 'EditUser' })"
+      />
+      <Button
+        label="Шығу"
+        severity="danger"
+        icon="pi pi-sign-out"
+        @click="signOut"
+      />
     </div>
   </div>
-  <div class="flex" style="width: 90%; padding: 18px" v-if="isAdmin('ROLE_CHILD')">
+  <div
+    class="flex"
+    style="width: 90%; padding: 18px"
+    v-if="isAdmin('ROLE_CHILD')"
+  >
     <MeterGroup :value="value" style="width: 100%" />
   </div>
 
@@ -45,7 +58,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const store = useMainStore();
 const { currentUser } = storeToRefs(store);
-const { getPaged } = useQueries()
+const { getPaged } = useQueries();
 
 const value = ref([
   { label: "Жұлдызша", color: "#34d399", value: 16, icon: "pi pi-star-fill" },
@@ -54,15 +67,36 @@ const value = ref([
   { label: "Күміс теңге", color: "#c084fc", value: 10, icon: "pi pi-bitcoin" },
 ]);
 
-const isAdmin = (roleN = 'ROLE_ADMIN') => {
-    const roles = currentUser.value?.roles;
+const isAdmin = (roleN = "ROLE_ADMIN") => {
+  const roles = currentUser.value?.roles;
 
-    return roles?.length > 0
-        ? roles.find((role) => role.name === roleN)
-        : false;
+  return roles?.length > 0 ? roles.find((role) => role.name === roleN) : false;
 };
 
 const router = useRouter();
+const rewards = ref([]);
+
+const getRewards = async () => {
+  rewards.value = await getPaged({ serviceName: "reward" });
+  rewards.value = rewards.value.filter(
+    (item) => item?.userId === currentUser.value?.id
+  );
+  const rews = {
+    Жұлдызша: 0,
+    Алмас: 0,
+    "Алтын белгі": 0,
+    "Күміс теңге": 0,
+  };
+
+  rewards.value.forEach((item) => {
+    rews[item?.name] += item?.count || 0;
+  });
+
+  value.value = value.value.map((item) => {
+    item.value = rews[item.label];
+    return item;
+  });
+};
 
 const getRole = (name) => {
   if (name === "") return "Жоқ";
@@ -81,14 +115,17 @@ const signOut = () => {
   router.push({ name: "Login" });
 };
 
-const users = ref([])
+const users = ref([]);
 
 onMounted(async () => {
-  await getChilds()
-})
+  await getChilds();
+  await getRewards();
+});
 
 const getChilds = async () => {
-  users.value = await getPaged({ serviceName: 'users' })
-  users.value = users.value.filter(user => user?.parentId && user?.parentId === currentUser.value?.id)
-}
+  users.value = await getPaged({ serviceName: "users" });
+  users.value = users.value.filter(
+    (user) => user?.parentId && user?.parentId === currentUser.value?.id
+  );
+};
 </script>
