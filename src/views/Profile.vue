@@ -26,7 +26,7 @@
       <Button label="Шығу" severity="danger" icon="pi pi-sign-out" @click="signOut"/>
     </div>
   </div>
-  <div class="flex" style="width: 90%; padding: 18px">
+  <div class="flex" style="width: 90%; padding: 18px" v-if="isAdmin('ROLE_CHILD')">
     <MeterGroup :value="value" style="width: 100%" />
   </div>
 

@@ -21,6 +21,11 @@
     <Dialog v-model:visible="visibleStart" modal draggable="false" header="Бастау">
         <Level @click-game="clickGame" />
     </Dialog>
+    <Dialog v-model:visible="visibleWin" modal draggable="false" header="Бастау">
+        <div class="win">
+            <img :src="WinImage" alt="">
+        </div>
+    </Dialog>
     <FirstGamePlay v-if="visibleGame" v-model="visibleGame" />
 </template>
 <script setup>
@@ -34,6 +39,7 @@ import SmallWin from '@assets/small-win.wav'
 import BigWin from '@assets/big-win.wav'
 import { useRouter } from 'vue-router';
 import FirstGamePlay from './FirstGamePlay.vue';
+import WinImage from '@assets/win.png';
 import Level from './Level.vue';
 
 const gameStore = useGameStore()
@@ -43,6 +49,7 @@ const audio = new Audio(Music)
 const smallWin = new Audio(SmallWin)
 const bigWin = new Audio(BigWin)
 const volume = ref(0.5)
+const visibleWin = ref(false)
 const router = useRouter()
 
 onMounted(() => {
@@ -69,11 +76,13 @@ const tryPlay = () => {
 }
 
 watch(passed, () => {
+    audio.pause()
     if (passed.value !== 4) {
         smallWin.play()
     } else {
         bigWin.play()
     }
+    visibleWin.value = true
 })
 
 const clickGame = (lvl) => {

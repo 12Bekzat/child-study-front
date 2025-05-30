@@ -7,7 +7,7 @@
         </template>
         <template #item="{ item, props, hasSubmenu, root }">
             <a v-ripple v-bind="props.action"
-                v-if="((item?.meta?.isAdmin && isAdmin()) || (!item?.meta?.isAdmin)) && (item?.meta?.isMobile !== true) && ((item?.meta?.isChild && isAdmin('ROLE_CHILD')) || (!item?.meta?.isChild))">
+                v-if="((item?.meta?.isAdmin && isAdmin()) || (!item?.meta?.isAdmin)) && (item?.meta?.isMobile !== true) && ((item?.meta?.isChild && isAdmin('ROLE_CHILD') || isAdmin()) || (!item?.meta?.isChild))">
                 <RouterLink class="link" :to="item?.to">{{ item.label }}</RouterLink>
                 <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
                 <span v-if="item.shortcut"

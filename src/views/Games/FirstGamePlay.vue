@@ -29,11 +29,20 @@
 import { useGameStore } from '@/stores/gameStore'
 import { useMainStore } from '@/stores/mainStore'
 import Bg from '@assets/bg1.png'
+import Music from '@assets/first-game-music.mp3'
+import SmallWin from '@assets/small-win.wav'
+import BigWin from '@assets/big-win.wav'
+import WinImage from '@assets/win.png'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
+import { Dialog } from 'primevue'
 
 const images = import.meta.glob('@/assets/first-game/*.png', { eager: true, import: 'default' })
 const currentWord = ref(0)
+
+const audio = new Audio(Music)
+const smallWin = new Audio(SmallWin)
+const bigWin = new Audio(BigWin)
 
 const store = useMainStore()
 const gameStore = useGameStore()
@@ -45,6 +54,7 @@ const allWords = ref([])
 const getImage = (name) => images[`/src/assets/first-game/${name}.png`] // динамически
 const generatedLetters = ref([])
 const answer = ref([])
+const visibleWin = ref(false)
 
 onMounted(() => {
     console.log('levels.value[level.value]', levels.value[level.value])
@@ -82,13 +92,15 @@ const moveLetter = (letter, index) => {
         index
     })
 
-    if (answer.value.length === allWords.value[currentWord.value].length) {
+    if (answer.value.length === allWords.value[currentWord.value]?.length) {
         const result = answer.value.map(item => item.letter).join('')
         console.log('result', result)
         if (result.toLowerCase() === allWords.value[currentWord.value].toLowerCase()) {
             currentWord.value += 1
 
             if (currentWord.value === allWords.value.length) {
+                currentWord.value = 0
+                answer.value = []
                 winLevel()
                 return
             }
@@ -100,8 +112,6 @@ const moveLetter = (letter, index) => {
 }
 
 const winLevel = () => {
-    currentWord.value = 0
-    answer.value = []
     visible.value = false
     level.value += 1
     passed.value = level.value

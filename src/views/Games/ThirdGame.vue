@@ -21,6 +21,16 @@
     <Dialog v-model:visible="visibleStart" modal draggable="false" header="Бастау">
         <Level @click-game="clickGame" />
     </Dialog>
+    <Dialog v-model:visible="visibleWin" modal draggable="false">
+        <div class="win">
+            <img :src="WinImage" alt="">
+        </div>
+    </Dialog>
+    <Dialog v-model:visible="visibleLose" modal draggable="false">
+        <div class="win">
+            <img :src="LoseImage" alt="">
+        </div>
+    </Dialog>
     <ThirdGamePlay v-if="visibleGame" v-model="visibleGame" />
 </template>
 <script setup>
@@ -35,6 +45,8 @@ import BigWin from '@assets/big-win.wav'
 import Fail from '@assets/fail.mp3'
 import { useRouter } from 'vue-router';
 import Level from './Level.vue';
+import WinImage from '@assets/win.png';
+import LoseImage from '@assets/lose.png';
 import ThirdGamePlay from './ThirdGamePlay.vue';
 
 const gameStore = useGameStore()
@@ -46,6 +58,8 @@ const bigWin = new Audio(BigWin)
 const fail = new Audio(Fail)
 const volume = ref(0.5)
 const router = useRouter()
+const visibleWin = ref(false)
+const visibleLose = ref(false)
 
 const words = ref([
     'apple', 'house', 'mouse', 'water', 'table', 'plane',
@@ -62,6 +76,7 @@ watch(lose, () => {
     if (lose.value) {
         audio.pause()
         fail.play()
+        visibleLose.value = true
     }
 })
 
@@ -102,6 +117,7 @@ watch(passed, () => {
     } else {
         bigWin.play()
     }
+    visibleWin.value = true
 })
 
 const clickGame = (lvl) => {

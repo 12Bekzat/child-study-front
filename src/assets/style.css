@@ -1260,4 +1260,15 @@ footer {
   box-shadow: none;
   transform: translateY(7px);
   transition: 35ms cubic-bezier(0.5, 0.7, 0.4, 1);
+}
+
+.win {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.win img {
+  width: 300px;
+  -o-object-fit: cover;
+     object-fit: cover;
 }/*# sourceMappingURL=style.css.map */

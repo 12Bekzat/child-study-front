@@ -1463,3 +1463,14 @@ footer {
     }
   }
 }
+
+.win {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 300px;
+    object-fit: cover;
+  }
+}

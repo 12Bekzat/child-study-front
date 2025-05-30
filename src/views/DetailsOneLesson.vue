@@ -7,7 +7,7 @@
       {{ activeLesson?.description }}
     </div>
     <div class="one-lesson__manage">
-      <Button label="Өту" :disabled="!isAdmin" @click="setReview"/>
+      <Button label="Өту" :disabled="!isAdmin()" @click="setReview"/>
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@ import { Button } from "primevue";
 const store = useMainStore()
 const { activeLesson, currentUser } = storeToRefs(store)
 
-const { update } = useQueries()
+const { update, getMe } = useQueries()
 
 const isAdmin = () => {
   const roles = currentUser.value?.roles;
@@ -46,8 +46,12 @@ const setReview = async () => {
             extra: JSON.stringify(oldExtra)
         } 
     }
+    debugger
 
-    const ans = await update({ item, serviceName: 'users' })
-    window.location.reload()
+    try {
+      const ans = await update({ item, serviceName: 'users' })
+    } catch (error) {}
+    
+    await getMe()
 }
 </script>

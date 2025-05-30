@@ -7,13 +7,15 @@ import { useMainStore } from './stores/mainStore';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
 import Footer from './components/Footer.vue';
+import { useQueries } from './composables/useQueries';
 
 const store = useMainStore()
 const { currentUser } = storeToRefs(store)
+const { getMe } = useQueries()
 
 const route = useRoute();
 
-onMounted(() => {
+onMounted(async () => {
   console.log(currentUser.value);
   
   const color = {
@@ -35,6 +37,8 @@ onMounted(() => {
 
   updatePrimaryPalette(color.palette)
   AppEventBus.emit('theme-palette-change')
+
+  await getMe();
 });
 
 const formUrls = ['login', 'register', '/play']

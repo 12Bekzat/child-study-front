@@ -67,11 +67,23 @@ const isAdmin = (roleN = 'ROLE_ADMIN') => {
         : false;
 };
 
+function shuffleArray(arr) {
+    return arr
+        .map((item) => ({ item, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ item }) => item)
+}
+
 const setTest = (test) => {
     activeTest.value = {
         ...test,
         questions: JSON.parse(test?.questions)
     }
+
+    if (activeTest.value?.questions?.length > 0) {
+        activeTest.value.questions = shuffleArray(activeTest.value?.questions || [])
+    }
+    
     router.push({ name: 'TestDetails' })
 }
 </script>
